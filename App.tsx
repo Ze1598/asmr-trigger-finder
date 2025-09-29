@@ -87,7 +87,7 @@ const App: React.FC = () => {
             <div className="space-y-8">
               <VideoPlayer videoId={videoId} />
                <div className="text-center text-sm text-slate-500 my-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
-                <p><strong>Note:</strong> The AI analyzes the video's title, description, and comments to find triggers. It does not watch or listen to the video directly.</p>
+                <p><strong>Note:</strong> The AI uses Google Search to find the video's public data (like its description and comments) to identify triggers. Accuracy depends on what information is publicly available.</p>
               </div>
               <TriggerList triggers={triggers} videoId={videoId} />
               {sources && sources.length > 0 && <SourceList sources={sources} />}

@@ -4,23 +4,28 @@ import { Trigger, GroundingSource } from '../types';
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 export const getTriggersFromVideo = async (url: string): Promise<{ triggers: Trigger[], sources: GroundingSource[] }> => {
-  const prompt = `You are an ASMR video analyst. Your task is to analyze a YouTube video based on its publicly available text data. A user has provided this URL: "${url}".
+  const prompt = `You are a world-class expert at identifying ASMR triggers in YouTube videos. A user has provided this URL: "${url}".
 
-Use the Google Search tool to find the video's title, description, comments, and any available transcripts.
+Your task is to find a list of specific ASMR triggers and their timestamps from this video.
 
-Based ONLY on the text information you find, identify a diverse list of 5 to 10 distinct ASMR triggers. For each trigger, provide a timestamp if it is mentioned in the text you find.
+**Instructions:**
+1.  **Use Google Search:** You MUST use the Google Search tool to find information about the provided YouTube video URL. Your goal is to find text that describes the triggers. Look for:
+    *   The official video description (which often lists triggers).
+    *   Pinned or top-voted user comments (which often have timestamped trigger lists).
+    *   Online discussions, Reddit threads, or articles that mention the video's triggers.
+2.  **Analyze Search Results:** Based *only* on the text you find through your search, identify 5-10 distinct ASMR triggers and their timestamps.
+3.  **Format the Output:** Your response MUST be ONLY a valid JSON array of objects. Do not include any other text, explanations, or markdown. Each object must have two keys:
+    *   "trigger": A string describing the trigger (e.g., "gentle tapping", "soft whispering").
+    *   "timestamp": A string for the time, formatted as "MM:SS" or "HH:MM:SS".
 
-IMPORTANT: You cannot 'watch' or 'listen' to the video. Your analysis must be strictly based on the text you can find on the web about this URL. If you cannot find specific triggers or timestamps in the search results, do not invent them.
-
-Your response MUST be ONLY a valid JSON array of objects. Do not include any other text, explanations, or markdown formatting. Each object in the array must have exactly two keys:
-1. "trigger": A string describing the trigger (e.g., "gentle tapping", "soft whispering", "crinkling sounds").
-2. "timestamp": A string representing the time, STRICTLY formatted as "MM:SS" or "HH:MM:SS". Do NOT use only seconds.
+**Important Rules:**
+*   If your search does not yield any specific triggers or timestamps, you MUST return an empty JSON array \`[]\`.
+*   Do not invent triggers or timestamps. Your answer must be grounded in the search results.
 
 Example of a valid response:
 [
   {"trigger": "Tapping on glass", "timestamp": "01:23"},
-  {"trigger": "Whispering affirmations", "timestamp": "05:41"},
-  {"trigger": "Crinkling plastic wrap", "timestamp": "12:15"}
+  {"trigger": "Whispering affirmations", "timestamp": "05:41"}
 ]`;
 
   try {
