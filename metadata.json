@@ -1,0 +1,5 @@
+{
+  "name": "ASMR Trigger Finder",
+  "description": "Submit a YouTube URL for an ASMR video to receive an AI-generated list of potential ASMR triggers and their corresponding timestamps.",
+  "requestFramePermissions": []
+}
