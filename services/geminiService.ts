@@ -8,19 +8,14 @@ export const getTriggersFromVideo = async (url: string): Promise<{ triggers: Tri
 
 Your task is to find a list of specific ASMR triggers and their timestamps from this video.
 
-**Instructions:**
-1.  **Use Google Search:** You MUST use the Google Search tool to find information about the provided YouTube video URL. Your goal is to find text that describes the triggers. Look for:
-    *   The official video description (which often lists triggers).
-    *   Pinned or top-voted user comments (which often have timestamped trigger lists).
-    *   Online discussions, Reddit threads, or articles that mention the video's triggers.
-2.  **Analyze Search Results:** Based *only* on the text you find through your search, identify 5-10 distinct ASMR triggers and their timestamps.
-3.  **Format the Output:** Your response MUST be ONLY a valid JSON array of objects. Do not include any other text, explanations, or markdown. Each object must have two keys:
+Your response MUST be ONLY a valid JSON array of objects. Do not include any other text, explanations, or markdown. Each object must have two keys:
     *   "trigger": A string describing the trigger (e.g., "gentle tapping", "soft whispering").
     *   "timestamp": A string for the time, formatted as "MM:SS" or "HH:MM:SS".
 
 **Important Rules:**
-*   If your search does not yield any specific triggers or timestamps, you MUST return an empty JSON array \`[]\`.
-*   Do not invent triggers or timestamps. Your answer must be grounded in the search results.
+*   You can ONLY derive your answer from the analysis of this particular YouTube video, no other sources allowed.
+*   If your analysis does not yield any specific triggers or timestamps, you MUST return an empty JSON array \`[]\`.
+*   Do not invent triggers or timestamps. Your answer must be grounded in the video results.
 
 Example of a valid response:
 [
@@ -29,12 +24,37 @@ Example of a valid response:
 ]`;
 
   try {
+
+    const ytVideo = {
+      fileData: {
+        fileUri: url,
+        mimeType: 'video/mp4',
+      },
+    };
+
+    const safetySettings = [
+    {
+      category: "HARM_CATEGORY_HARASSMENT",
+      threshold: "BLOCK_NONE",
+    },
+    {
+      category: "HARM_CATEGORY_HATE_SPEECH",
+      threshold: "BLOCK_NONE",
+    },
+    {
+      category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      threshold: "BLOCK_NONE",
+    },
+    {
+      category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+      threshold: "BLOCK_NONE",
+    },
+  ];
+
+
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        tools: [{googleSearch: {}}],
-      },
+      contents: [ytVideo, prompt],
     });
 
     let jsonString = response.text.trim();
